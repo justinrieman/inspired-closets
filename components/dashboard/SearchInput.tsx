@@ -27,7 +27,7 @@ const SearchInput = () => {
         Search
       </label>
       <input
-        className="peer block rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500 transition-width duration-500 w-1/2 hover:w-4/6 focus:border-blue-200 focus:outline-none focus:ring-sky-200 focus:ring-1"
+        className="peer block rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500 transition-width duration-500 xl:w-4/12 xl:hover:w-5/12 lg:w-6/12 lg:hover:w-7/12 md:w-8/12 md:hover:w-9/12 sm:w-10/12 sm:hover:w-11/12 w-8/12 hover:w-9/12 focus:border-gray-300 focus:outline-none focus:ring-gray-300 focus:ring-1"
         placeholder="Search..."
         onChange={(e) => handleSearch(e.target.value)}
         defaultValue={searchParams.get('query')?.toString()}

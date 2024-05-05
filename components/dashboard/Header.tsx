@@ -15,10 +15,13 @@ const Header = () => {
   return (
     <div className="flex items-center justify-between bg-gray-50 rounded-md mb-2 p-2">
       {/* Left Side */}
+
       <div className="flex flex-grow">
-        <div className="p-1 rounded-md hover:bg-red-200">
-          <History className="w-5 hover:text-red-800 hover:cursor-pointer" />
-        </div>
+        <button>
+          <div className="p-1 rounded-md">
+            <History className="w-5 hover:text-red-800" />
+          </div>
+        </button>
 
         <SearchInput />
       </div>
