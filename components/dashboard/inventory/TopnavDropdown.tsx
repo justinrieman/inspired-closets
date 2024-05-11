@@ -22,8 +22,6 @@ type ItemProps = {
 };
 
 const TopnavDropdown = ({ items, label }: ItemProps) => {
-  console.log(items);
-  console.log(label);
   const pathname = usePathname();
   const splitPathname = pathname.split('/');
   const lastWordOfPathname = splitPathname[splitPathname.length - 1];

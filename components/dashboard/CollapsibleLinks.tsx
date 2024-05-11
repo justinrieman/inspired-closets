@@ -55,7 +55,7 @@ const CollapsibleLinks = () => {
                 <LinkIcon className="w-5" />
                 <p className="hidden md:block">{link.name}</p>
               </CollapsibleTrigger>
-              <CollapsibleContent>
+              <CollapsibleContent className="data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down overflow-hidden">
                 <div className="flex flex-col w-full">
                   {link.subLinks.map((subLink) => (
                     <SubLink
