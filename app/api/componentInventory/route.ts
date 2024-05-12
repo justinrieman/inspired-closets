@@ -1,6 +1,7 @@
+'use server';
+
 import dbConnect from '@/lib/dbConnect';
 import Component from '@/lib/models/Component';
-import { User } from 'lucide-react';
 import { Types } from 'mongoose';
 import { NextResponse } from 'next/server';
 
@@ -9,7 +10,25 @@ const ObjectId = require('mongoose').Types.ObjectId;
 export async function GET() {
   try {
     await dbConnect();
-    const components = await Component.find();
+    const components = await Component.aggregate([
+      {
+        $project: {
+          _id: 1,
+          type: 1,
+          name: 1,
+          color: 1,
+          quantity: 1,
+          maxQuantity: 1,
+          lastUpdated: {
+            $dateToString: { format: '%m/%d/%Y', date: '$lastUpdated' },
+          },
+          expectedArrival: {
+            $dateToString: { format: '%m/%d/%Y', date: '$expectedArrival' },
+          },
+        },
+      },
+    ]);
+
     return new NextResponse(JSON.stringify(components), { status: 200 });
   } catch (error) {
     return new NextResponse('Error in fetching components ' + error, {
@@ -21,16 +40,19 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+    const date = new Date().toISOString();
+
+    body.values.lastUpdated = date;
+    body.values.expectedArrival = '';
 
     await dbConnect();
-    const newComponent = new Component(body);
 
-    await newComponent.save();
+    await Component.create(body.values);
 
     return new NextResponse(
       JSON.stringify({
-        message: 'New component created',
-        component: newComponent,
+        message: 'Component Created',
+        component: body.values,
       }),
       { status: 201 }
     );
@@ -109,10 +131,17 @@ export async function DELETE(request: Request) {
 
     await dbConnect();
 
-    //
+    // Check if component was found and deleted
 
     const deletedComponent = await Component.findByIdAndDelete(
       new Types.ObjectId(componentId)
     );
+
+    if (!deletedComponent) {
+      return new NextResponse(
+        JSON.stringify({ message: 'Invalid componentID' }),
+        { status: 400 }
+      );
+    }
   } catch (error) {}
 }
