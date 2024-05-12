@@ -1,9 +1,8 @@
-'use server';
-
 import dbConnect from '@/lib/dbConnect';
 import Component from '@/lib/models/Component';
 import { Types } from 'mongoose';
-import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
+import { NextResponse, NextRequest } from 'next/server';
 
 const ObjectId = require('mongoose').Types.ObjectId;
 
@@ -37,9 +36,10 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+    const path = request.nextUrl.searchParams.get('path') || '/';
     const date = new Date().toISOString();
 
     body.values.lastUpdated = date;
@@ -48,6 +48,8 @@ export async function POST(request: Request) {
     await dbConnect();
 
     await Component.create(body.values);
+
+    revalidatePath(path);
 
     return new NextResponse(
       JSON.stringify({
@@ -63,20 +65,21 @@ export async function POST(request: Request) {
   }
 }
 
-export async function PATCH(request: Request) {
+export async function PATCH(request: NextRequest) {
   try {
     const body = await request.json();
-    const { componentId, newCount } = body;
+    const { _id, newQuantity } = body.updatedComponent;
+    console.log(_id);
     await dbConnect();
 
-    if (!componentId || !newCount) {
+    if (!_id || !newQuantity) {
       return new NextResponse(
         JSON.stringify({ message: 'ID or new count are required' }),
         { status: 400 }
       );
     }
 
-    if (!Types.ObjectId.isValid(componentId)) {
+    if (!Types.ObjectId.isValid(_id)) {
       return new NextResponse(
         JSON.stringify({ message: 'Invalid component ID' }),
         { status: 400 }
@@ -84,8 +87,8 @@ export async function PATCH(request: Request) {
     }
 
     const updatedComponent = await Component.findOneAndUpdate(
-      { _id: new ObjectId(componentId) },
-      { quantity: newCount },
+      { _id: new ObjectId(_id) },
+      { quantity: newQuantity },
       { new: true }
     );
 
@@ -99,7 +102,7 @@ export async function PATCH(request: Request) {
     return new NextResponse(
       JSON.stringify({
         message: 'Component updated successfully',
-        component: updatedComponent,
+        // component: updatedComponent,
       }),
       { status: 200 }
     );

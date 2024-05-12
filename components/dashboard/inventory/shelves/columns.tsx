@@ -12,6 +12,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Dialog, DialogTrigger } from '@/components/ui/dialog';
+import { QuantityDialogForm } from '@/components/dashboard/inventory/QuantityDialogForm';
 
 export type ShelvesInventory = {
   _id: string;
@@ -25,16 +27,19 @@ export type ShelvesInventory = {
 };
 
 export const columns: ColumnDef<ShelvesInventory>[] = [
-  //   {
-  //     accessorKey: 'type',
-  //     header: () => <div className="text-center">Type</div>,
-  //     cell: ({ row }) => (
-  //       <div className="text-center">{row.getValue('type')}</div>
-  //     ),
-  //   },
   {
     accessorKey: 'color',
-    header: () => <div className="text-center">Color</div>,
+    header: ({ column }) => (
+      <div className="text-center">
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Color
+          <ArrowUpDown className="ml-2 h-4 w-4"></ArrowUpDown>
+        </Button>
+      </div>
+    ),
     cell: ({ row }) => (
       <div className="text-center">{row.getValue('color')}</div>
     ),
@@ -85,8 +90,21 @@ export const columns: ColumnDef<ShelvesInventory>[] = [
       };
 
       return (
-        <div onClick={editQuantity} className={`text-center ${rowColor}`}>
-          {row.getValue('quantity')}
+        <div className="text-center">
+          <Dialog>
+            <DialogTrigger>
+              <div onClick={editQuantity} className={`py-1 px-5 ${rowColor}`}>
+                {row.getValue('quantity')}
+              </div>
+            </DialogTrigger>
+            <QuantityDialogForm
+              _id={row.original._id}
+              type={row.original.type}
+              name={row.original.name}
+              color={row.original.color}
+              quantity={row.original.quantity}
+            />
+          </Dialog>
         </div>
       );
     },
