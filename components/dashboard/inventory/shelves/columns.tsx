@@ -14,6 +14,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { QuantityDialogForm } from '@/components/dashboard/inventory/QuantityDialogForm';
+import Link from 'next/link';
+import DataTableRowActions from '../DataTableRowActions';
 
 export type ShelvesInventory = {
   _id: string;
@@ -133,28 +135,13 @@ export const columns: ColumnDef<ShelvesInventory>[] = [
   {
     id: 'actions',
     cell: ({ row }) => {
-      // TODO: do something with this
-      const rowInfo = row.original;
-
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="h-8 w-8 p-0 hover:bg-gray-200">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => console.log('hello')}>
-              View Item
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Mark As Ordered </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <DataTableRowActions
+          row={row}
+          onEdit={() => {
+            console.log('onEdit');
+          }}
+        />
       );
     },
   },

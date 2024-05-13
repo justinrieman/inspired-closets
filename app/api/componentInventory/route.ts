@@ -66,6 +66,7 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
+  // TODO Update lastUpdated section when putting into database
   try {
     const body = await request.json();
     const { _id, newQuantity } = body.updatedComponent;

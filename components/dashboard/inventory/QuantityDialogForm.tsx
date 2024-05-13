@@ -17,7 +17,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { revalidatePath } from 'next/cache';
+
 import {
   Form,
   FormControl,
@@ -78,8 +78,8 @@ export function QuantityDialogForm({
       throw new Error('Failed to update component');
     }
 
-    router.refresh();
     router.push(path);
+    router.refresh();
   }
   return (
     <DialogContent className="sm:max-w-md">
