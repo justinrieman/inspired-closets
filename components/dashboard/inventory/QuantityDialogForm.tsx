@@ -65,6 +65,7 @@ export function QuantityDialogForm({
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const updatedComponent = {
       _id: _id,
+      prevQuantity: quantity,
       newQuantity: values.quantity,
     };
 

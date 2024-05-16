@@ -28,6 +28,12 @@ const componentSchema = new Schema({
   expectedArrival: {
     type: Date,
   },
+  quantityHistory: [
+    {
+      prevQuantity: Number,
+      prevDate: Date,
+    },
+  ],
 });
 
 const Component = models.Component || model('Component', componentSchema);

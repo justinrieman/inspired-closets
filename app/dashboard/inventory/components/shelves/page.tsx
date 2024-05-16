@@ -1,5 +1,6 @@
 import { columns } from '@/components/dashboard/inventory/shelves/columns';
 import { DataTable } from '@/components/dashboard/DataTable';
+import { formatDate } from '@/lib/utils';
 
 const getComponents = async () => {
   try {
@@ -21,6 +22,11 @@ const ShelvesPage = async () => {
 
   const shelves = components.filter((component: any) => {
     return component.type === 'shelf';
+  });
+
+  shelves.forEach((shelf: any) => {
+    shelf.lastUpdated = formatDate(shelf.lastUpdated);
+    shelf.expectedArrival = formatDate(shelf.expectedArrival);
   });
 
   return (

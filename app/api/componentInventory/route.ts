@@ -9,24 +9,7 @@ const ObjectId = require('mongoose').Types.ObjectId;
 export async function GET() {
   try {
     await dbConnect();
-    const components = await Component.aggregate([
-      {
-        $project: {
-          _id: 1,
-          type: 1,
-          name: 1,
-          color: 1,
-          quantity: 1,
-          maxQuantity: 1,
-          lastUpdated: {
-            $dateToString: { format: '%m/%d/%Y', date: '$lastUpdated' },
-          },
-          expectedArrival: {
-            $dateToString: { format: '%m/%d/%Y', date: '$expectedArrival' },
-          },
-        },
-      },
-    ]);
+    const components = await Component.find();
 
     return new NextResponse(JSON.stringify(components), { status: 200 });
   } catch (error) {
@@ -44,6 +27,11 @@ export async function POST(request: NextRequest) {
 
     body.values.lastUpdated = date;
     body.values.expectedArrival = '';
+    body.values.quantityHistory = [];
+    // body.values.quantityHistory.push({
+    //   prevQuantity: body.values.quantity,
+    //   prevDate: date,
+    // });
 
     await dbConnect();
 
@@ -69,8 +57,9 @@ export async function PATCH(request: NextRequest) {
   // TODO Update lastUpdated section when putting into database
   try {
     const body = await request.json();
-    const { _id, newQuantity } = body.updatedComponent;
-    console.log(_id);
+    const { _id, newQuantity, prevQuantity } = body.updatedComponent;
+
+    console.log(body.updatedComponent);
     await dbConnect();
 
     if (!_id || !newQuantity) {
@@ -87,9 +76,25 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
+    // Retrieve the current lastUpdated date from the component document
+    const component = await Component.findOne({ _id });
+    const lastUpdated = component.lastUpdated;
+    const currentDate = new Date();
+
+    // Prepare the object to push to the quantityHistory array
+    const quantityHistoryItem = {
+      prevQuantity: prevQuantity,
+      prevDate: lastUpdated,
+    };
+
     const updatedComponent = await Component.findOneAndUpdate(
       { _id: new ObjectId(_id) },
-      { quantity: newQuantity },
+      {
+        $set: { quantity: newQuantity, lastUpdated: currentDate },
+        $push: {
+          quantityHistory: quantityHistoryItem,
+        },
+      },
       { new: true }
     );
 
