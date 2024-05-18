@@ -28,10 +28,6 @@ export async function POST(request: NextRequest) {
     body.values.lastUpdated = date;
     body.values.expectedArrival = '';
     body.values.quantityHistory = [];
-    // body.values.quantityHistory.push({
-    //   prevQuantity: body.values.quantity,
-    //   prevDate: date,
-    // });
 
     await dbConnect();
 
@@ -57,61 +53,114 @@ export async function PATCH(request: NextRequest) {
   // TODO Update lastUpdated section when putting into database
   try {
     const body = await request.json();
-    const { _id, newQuantity, prevQuantity } = body.updatedComponent;
 
-    console.log(body.updatedComponent);
-    await dbConnect();
+    // If we are updating the quantity or if we are updating expected arrival
+    if (body.updatedComponent.newQuantity) {
+      const { _id, newQuantity, prevQuantity } = body.updatedComponent;
 
-    if (!_id || !newQuantity) {
-      return new NextResponse(
-        JSON.stringify({ message: 'ID or new count are required' }),
-        { status: 400 }
-      );
-    }
+      await dbConnect();
 
-    if (!Types.ObjectId.isValid(_id)) {
-      return new NextResponse(
-        JSON.stringify({ message: 'Invalid component ID' }),
-        { status: 400 }
-      );
-    }
+      if (!_id || !newQuantity) {
+        return new NextResponse(
+          JSON.stringify({ message: 'ID or new count are required' }),
+          { status: 400 }
+        );
+      }
 
-    // Retrieve the current lastUpdated date from the component document
-    const component = await Component.findOne({ _id });
-    const lastUpdated = component.lastUpdated;
-    const currentDate = new Date();
+      if (!Types.ObjectId.isValid(_id)) {
+        return new NextResponse(
+          JSON.stringify({ message: 'Invalid component ID' }),
+          { status: 400 }
+        );
+      }
 
-    // Prepare the object to push to the quantityHistory array
-    const quantityHistoryItem = {
-      prevQuantity: prevQuantity,
-      prevDate: lastUpdated,
-    };
+      // Retrieve the current lastUpdated date from the component document
+      const component = await Component.findOne({ _id });
+      const lastUpdated = component.lastUpdated;
+      const currentDate = new Date();
 
-    const updatedComponent = await Component.findOneAndUpdate(
-      { _id: new ObjectId(_id) },
-      {
-        $set: { quantity: newQuantity, lastUpdated: currentDate },
-        $push: {
-          quantityHistory: quantityHistoryItem,
+      // Prepare the object to push to the quantityHistory array
+      const quantityHistoryItem = {
+        prevQuantity: prevQuantity,
+        prevDate: lastUpdated,
+      };
+
+      const updatedComponent = await Component.findOneAndUpdate(
+        { _id: new ObjectId(_id) },
+        {
+          $set: { quantity: newQuantity, lastUpdated: currentDate },
+          $push: {
+            quantityHistory: quantityHistoryItem,
+          },
         },
-      },
-      { new: true }
-    );
+        { new: true }
+      );
 
-    if (!updatedComponent) {
+      if (!updatedComponent) {
+        return new NextResponse(
+          JSON.stringify({ message: "Component wasn't updated successfully" }),
+          { status: 400 }
+        );
+      }
+
       return new NextResponse(
-        JSON.stringify({ message: "Component wasn't updated successfully" }),
-        { status: 400 }
+        JSON.stringify({
+          message: 'Component updated successfully',
+          component: updatedComponent,
+        }),
+        { status: 200 }
+      );
+    } else if (
+      body.updatedComponent.expectedArrival ||
+      body.updatedComponent.expectedArrival === null
+    ) {
+      const { _id, expectedArrival } = body.updatedComponent;
+
+      await dbConnect();
+
+      if (!_id) {
+        return new NextResponse(JSON.stringify({ message: 'ID is required' }), {
+          status: 400,
+        });
+      }
+
+      if (!Types.ObjectId.isValid(_id)) {
+        return new NextResponse(
+          JSON.stringify({ message: 'Invalid component ID' }),
+          { status: 400 }
+        );
+      }
+
+      const updatedComponent = await Component.findOneAndUpdate(
+        { _id: new ObjectId(_id) },
+        {
+          $set: { expectedArrival: expectedArrival },
+        },
+        { new: true }
+      );
+
+      if (!updatedComponent) {
+        return new NextResponse(
+          JSON.stringify({ message: "Component wasn't updated successfully" }),
+          { status: 400 }
+        );
+      }
+
+      return new NextResponse(
+        JSON.stringify({
+          message: 'Component updated successfully',
+          component: updatedComponent,
+        }),
+        { status: 200 }
+      );
+    } else {
+      return new NextResponse(
+        JSON.stringify({
+          message: 'Something Probabaly went wrong',
+        }),
+        { status: 500 }
       );
     }
-
-    return new NextResponse(
-      JSON.stringify({
-        message: 'Component updated successfully',
-        // component: updatedComponent,
-      }),
-      { status: 200 }
-    );
   } catch (error) {
     return new NextResponse('Error in updating component ' + error, {
       status: 500,
