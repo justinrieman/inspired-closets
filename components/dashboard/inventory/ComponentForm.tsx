@@ -25,7 +25,7 @@ import {
 const formSchema = z.object({
   type: z.string(),
   name: z.string(),
-  color: z.string(),
+  color: z.string().optional(),
   quantity: z.coerce.number(),
   maxQuantity: z.coerce.number(),
 });
@@ -91,26 +91,32 @@ const ComponentForm = () => {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="color"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Color</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a color" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="White">White</SelectItem>
-                  <SelectItem value="Morning Mist">Morning Mist</SelectItem>
-                </SelectContent>
-              </Select>
-            </FormItem>
-          )}
-        />
+
+        {form.watch().type !== 'box' && form.watch().type !== 'glide' && (
+          <FormField
+            control={form.control}
+            name="color"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Color</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a color" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="White">White</SelectItem>
+                    <SelectItem value="Morning Mist">Morning Mist</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormItem>
+            )}
+          />
+        )}
         <FormField
           control={form.control}
           name="name"

@@ -1,43 +1,41 @@
 import InventoryHistoryChart from '@/app/dashboard/charts/inventoryHistoryChart';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
 import { formatDate } from '@/lib/utils';
 
-const getComponentById = async (id: any) => {
-  try {
-    const response = await fetch(
-      `http://localhost:3000/api/componentInventory/${id}`,
-      {
-        cache: 'no-store',
-      }
-    );
-
-    return response.json();
-  } catch (error) {
-    console.log('Failed to fetch component', error);
-  }
+type InventoryItemPageCardProps = {
+  type: string;
+  color: string;
+  name: string;
+  quantity: number;
+  maxQuantity: number;
+  lastUpdated: string;
+  expectedArrival: string;
+  quantityHistory: {
+    prevQuantity: number;
+    prevDate: string;
+  }[];
 };
 
-const Page = async ({ params }: { params: { id: string } }) => {
-  const id = params.id;
-  let component = await getComponentById(id);
-  component = component.foundComponent;
-
+const InventoryItemPageCard = (props: InventoryItemPageCardProps) => {
   let capitalizedType =
-    component.type[0].toUpperCase() +
-    component.type.substring(1, component.type.length);
+    props.type[0].toUpperCase() + props.type.substring(1, props.type.length);
 
-  let progress = (component.quantity / component.maxQuantity) * 100;
+  let progress = (props.quantity / props.maxQuantity) * 100;
 
   if (progress > 100) {
     progress = 100;
   }
 
+  // Add current quantity and lastUpdated date to the bar chart
+  props.quantityHistory.push({
+    prevQuantity: props.quantity,
+    prevDate: props.lastUpdated,
+  });
+
   return (
     <>
       <div className="flex justify-between items-center rounded-t-md px-4 py-2 mt-4 bg-red-800 ">
-        <h1 className="text-gray-50 text-center pr-3">{component.color}</h1>
-        <h1 className=" text-gray-50 text-center  px-3">{component.name}</h1>
+        <h1 className="text-gray-50 text-center pr-3">{props.color}</h1>
+        <h1 className=" text-gray-50 text-center  px-3">{props.name}</h1>
 
         <h1 className=" text-gray-50 text-center px-3 ">{capitalizedType}</h1>
       </div>
@@ -52,7 +50,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
             style={{ ['width' as any]: `${progress}%` }}
             className="flex justify-center items-center bg-red-800 hover:bg-red-700 h-6 text-xs font-medium text-stone-50 p-0.5 leading-none rounded-full"
           >
-            {component.quantity} / {component.maxQuantity}
+            {props.quantity} / {props.maxQuantity}
           </div>
         </div>
         <hr className="mt-8 mb-4"></hr>
@@ -76,7 +74,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
                       </p>
                     </div>
                     <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                      {component.quantity}
+                      {props.quantity}
                     </div>
                   </div>
                 </li>
@@ -89,7 +87,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
                       </p>
                     </div>
                     <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                      {component.maxQuantity}
+                      {props.maxQuantity}
                     </div>
                   </div>
                 </li>
@@ -102,7 +100,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
                       </p>
                     </div>
                     <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                      {formatDate(component.lastUpdated)}
+                      {formatDate(props.lastUpdated)}
                     </div>
                   </div>
                 </li>
@@ -115,31 +113,35 @@ const Page = async ({ params }: { params: { id: string } }) => {
                       </p>
                     </div>
                     <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                      {component.expectedArrival || 'N/A'}
+                      {props.expectedArrival
+                        ? formatDate(props.expectedArrival)
+                        : 'N/A'}
                     </div>
                   </div>
                 </li>
               </ul>
               {/* <div className="flex justify-center mt-4">
-                <Button variant="outline" className="">
-                  Edit
-                </Button>
-              </div> */}
+              <Button variant="outline" className="">
+                Edit
+              </Button>
+            </div> */}
             </div>
           </div>
           <div className="w-full max-w-sm lg:max-w-none mx-auto bg-gray-100 border border-gray-200 rounded-lg shadow">
-            <InventoryHistoryChart></InventoryHistoryChart>
+            <InventoryHistoryChart
+              history={props.quantityHistory}
+            ></InventoryHistoryChart>
           </div>
         </div>
         <hr className="mt-8 mb-4"></hr>
 
-        <div className="flex justify-center gap-20 mt-8">
-          <Button variant="outline">Edit {capitalizedType}</Button>
-          <Button variant="outline">Edit History</Button>
-        </div>
+        {/* <div className="flex justify-center gap-20 mt-8">
+        <Button variant="outline">Edit {capitalizedType}</Button>
+        <Button variant="outline">Edit History</Button>
+      </div> */}
       </div>
     </>
   );
 };
 
-export default Page;
+export default InventoryItemPageCard;

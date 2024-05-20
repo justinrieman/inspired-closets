@@ -23,24 +23,6 @@ export type ShelvesInventory = {
 
 export const columns: ColumnDef<ShelvesInventory>[] = [
   {
-    accessorKey: 'color',
-    header: ({ column }) => (
-      <div className="text-center">
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Color
-          <ArrowUpDown className="ml-2 h-4 w-4"></ArrowUpDown>
-        </Button>
-      </div>
-    ),
-    cell: ({ row }) => (
-      <div className="text-center">{row.getValue('color')}</div>
-    ),
-    filterFn: 'includesString',
-  },
-  {
     accessorKey: 'name',
     header: ({ column }) => (
       <div className="text-center">
@@ -56,7 +38,6 @@ export const columns: ColumnDef<ShelvesInventory>[] = [
     cell: ({ row }) => (
       <div className="text-center">{row.getValue('name')}</div>
     ),
-    filterFn: 'includesString',
   },
 
   {

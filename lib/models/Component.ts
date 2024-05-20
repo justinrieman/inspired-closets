@@ -11,7 +11,6 @@ const componentSchema = new Schema({
   },
   color: {
     type: String,
-    required: true,
   },
   quantity: {
     type: Number,

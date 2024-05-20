@@ -54,7 +54,7 @@ export async function PATCH(request: NextRequest) {
   try {
     const body = await request.json();
 
-    // If we are updating the quantity or if we are updating expected arrival
+    // If we are updating the quantity, maxQuantity or if we are updating expected arrival
     if (body.updatedComponent.newQuantity) {
       const { _id, newQuantity, prevQuantity } = body.updatedComponent;
 
@@ -92,6 +92,46 @@ export async function PATCH(request: NextRequest) {
           $push: {
             quantityHistory: quantityHistoryItem,
           },
+        },
+        { new: true }
+      );
+
+      if (!updatedComponent) {
+        return new NextResponse(
+          JSON.stringify({ message: "Component wasn't updated successfully" }),
+          { status: 400 }
+        );
+      }
+
+      return new NextResponse(
+        JSON.stringify({
+          message: 'Component updated successfully',
+          component: updatedComponent,
+        }),
+        { status: 200 }
+      );
+    } else if (body.updatedComponent.newMaxQuantity) {
+      const { _id, newMaxQuantity } = body.updatedComponent;
+
+      await dbConnect();
+
+      if (!_id || !newMaxQuantity) {
+        return new NextResponse(
+          JSON.stringify({ message: 'ID or new count are required' }),
+          { status: 400 }
+        );
+      }
+
+      if (!Types.ObjectId.isValid(_id)) {
+        return new NextResponse(
+          JSON.stringify({ message: 'Invalid component ID' }),
+          { status: 400 }
+        );
+      }
+      const updatedComponent = await Component.findOneAndUpdate(
+        { _id: new ObjectId(_id) },
+        {
+          $set: { maxQuantity: newMaxQuantity },
         },
         { new: true }
       );

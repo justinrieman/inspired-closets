@@ -31,7 +31,7 @@ type inventoryProps = {
   type: string;
   name: string;
   color: string;
-  quantity: number;
+  maxQuantity: number;
 };
 
 const formSchema = z.object({
@@ -39,16 +39,16 @@ const formSchema = z.object({
   // type: z.string(),
   // name: z.string(),
   // color: z.string(),
-  quantity: z.coerce.number(),
+  maxQuantity: z.coerce.number(),
 });
 
-export function QuantityDialogForm({
+const MaxQuantityDialogForm = ({
   _id,
   type,
   name,
   color,
-  quantity,
-}: inventoryProps) {
+  maxQuantity,
+}: inventoryProps) => {
   const path = usePathname();
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -58,15 +58,14 @@ export function QuantityDialogForm({
       // type: type,
       // name: name,
       // color: color,
-      quantity: quantity,
+      maxQuantity: maxQuantity,
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const updatedComponent = {
       _id: _id,
-      prevQuantity: quantity,
-      newQuantity: values.quantity,
+      newMaxQuantity: values.maxQuantity,
     };
 
     const response = await fetch('/api/componentInventory', {
@@ -94,12 +93,16 @@ export function QuantityDialogForm({
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <FormField
             control={form.control}
-            name="quantity"
+            name="maxQuantity"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Quantity</FormLabel>
+                <FormLabel>Max Quantity</FormLabel>
                 <FormControl>
-                  <Input type="number" placeholder={`${quantity}`} {...field} />
+                  <Input
+                    type="number"
+                    placeholder={`${maxQuantity}`}
+                    {...field}
+                  />
                 </FormControl>
               </FormItem>
             )}
@@ -118,4 +121,6 @@ export function QuantityDialogForm({
       </Form>
     </DialogContent>
   );
-}
+};
+
+export default MaxQuantityDialogForm;

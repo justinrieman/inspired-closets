@@ -60,11 +60,16 @@ const DataTableRowActions = <TData,>({
           <DropdownMenuSeparator />
 
           <DropdownMenuItem>
-            <Link href={path + '/' + component._id}>View Item</Link>
+            <Link href={'/dashboard/inventory/components/' + component._id}>
+              View Item
+            </Link>
           </DropdownMenuItem>
 
-          <DropdownMenuItem onClick={() => setIsDialogOpen(true)}>
-            Mark as Ordered
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => setIsDialogOpen(true)}
+          >
+            Update Arrival
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
