@@ -67,10 +67,28 @@ export function DataTable<TData, TValue>({
             onChange={(event) =>
               table.getColumn('name')?.setFilterValue(event.target.value)
             }
-            className="max-w-sm"
+            className=""
           />
         </div>
-        <div className="flex items-center py-4">
+        <div className="flex items-center py-4 md:w-auto w-28">
+          <Select
+            onValueChange={(value) => {
+              value === 'All'
+                ? table.getColumn('quantity')?.setFilterValue('')
+                : table.getColumn('quantity')?.setFilterValue(value);
+            }}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="All Levels" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="low">Low</SelectItem>
+              <SelectItem value="overstocked">Overstocked</SelectItem>
+              <SelectItem value="All">All Levels</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex items-center py-4 md:w-auto w-28">
           {table.getAllColumns()[0].id === 'color' && (
             <Select
               onValueChange={(value) => {

@@ -1,6 +1,6 @@
 'use client';
 
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef, FilterFn } from '@tanstack/react-table';
 import { ArrowUpDown } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -19,6 +19,24 @@ export type ShelvesInventory = {
   maxQuantity: number;
   lastUpdated: string;
   expectedArrival: string;
+};
+
+const inventoryLevel: FilterFn<any> = (
+  row,
+  columnId: string,
+  filterValue: string
+) => {
+  const quantity = Number(row.getValue('quantity'));
+  const maxQuantity = Number(row.getValue('maxQuantity'));
+  const quantityPercent = (quantity / maxQuantity) * 100;
+
+  if (filterValue === 'low') {
+    return Boolean(quantityPercent < 50);
+  } else if (filterValue === 'overstocked') {
+    return Boolean(quantityPercent > 100);
+  } else {
+    return false;
+  }
 };
 
 export const columns: ColumnDef<ShelvesInventory>[] = [
@@ -105,6 +123,7 @@ export const columns: ColumnDef<ShelvesInventory>[] = [
         </div>
       );
     },
+    filterFn: inventoryLevel,
   },
   {
     accessorKey: 'maxQuantity',
