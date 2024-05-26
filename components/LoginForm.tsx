@@ -4,19 +4,19 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { useFormState } from 'react-dom';
 import { useRef } from 'react';
 import { z } from 'zod';
-import { registerUser } from '@/lib/actions';
-import { registerFormSchema } from '@/lib/formSchemas';
+import { userLogin } from '@/lib/actions';
+import { loginFormSchema } from '@/lib/formSchemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-type RegisterFormFields = z.infer<typeof registerFormSchema>;
+type LoginFormFields = z.infer<typeof loginFormSchema>;
 
-const RegisterForm = () => {
-  const [state, formAction] = useFormState(registerUser, {
+const LoginForm = () => {
+  const [state, formAction] = useFormState(userLogin, {
     message: '',
   });
 
-  const form = useForm<RegisterFormFields>({
-    resolver: zodResolver(registerFormSchema),
+  const form = useForm<LoginFormFields>({
+    resolver: zodResolver(loginFormSchema),
   });
 
   const {
@@ -79,4 +79,4 @@ const RegisterForm = () => {
   );
 };
 
-export default RegisterForm;
+export default LoginForm;
