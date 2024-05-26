@@ -21,8 +21,6 @@ const LoginForm = () => {
 
   const {
     register,
-    handleSubmit,
-    setError,
     formState: { errors, isSubmitting },
   } = form;
 
