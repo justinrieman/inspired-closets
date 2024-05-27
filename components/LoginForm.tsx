@@ -10,7 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 type LoginFormFields = z.infer<typeof loginFormSchema>;
 
-const SignIn = () => {
+const LoginForm = () => {
   const [state, formAction] = useFormState(userLogin, {
     message: '',
   });
@@ -77,4 +77,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default LoginForm;
