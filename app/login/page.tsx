@@ -1,4 +1,4 @@
-import LoginForm from '@/components/LoginForm';
+import SignIn from '@/components/signinform';
 import Image from 'next/image';
 
 const LoginPage = () => {
@@ -17,7 +17,7 @@ const LoginPage = () => {
             Sign In
           </h5>
           <hr></hr>
-          <LoginForm />
+          <SignIn />
         </div>
       </div>
     </>
