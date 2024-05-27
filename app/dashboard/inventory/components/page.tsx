@@ -31,7 +31,7 @@ const ComponentsPage = async () => {
       <div>
         <DataTable columns={columns} data={components} />
       </div>
-      {/* <ComponentForm /> */}
+      <ComponentForm />
     </div>
   );
 };

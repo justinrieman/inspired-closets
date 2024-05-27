@@ -1,9 +1,17 @@
 import Header from '@/components/dashboard/Header';
 import Sidenav from '@/components/dashboard/Sidenav';
+import { getSession } from '@/lib/session';
+import { redirect } from 'next/navigation';
 
 import React from 'react';
 
-const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
+const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
+  const session = await getSession();
+
+  if (!session) {
+    redirect('/');
+  }
+
   return (
     <div className="flex h-screen flex-col md:flex-row md:overflow-hidden">
       <div className="w-full flex-none md:w-64">

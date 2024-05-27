@@ -33,6 +33,10 @@ const componentSchema = new Schema({
       prevDate: Date,
     },
   ],
+  branchLocation: {
+    type: String,
+    required: true,
+  },
 });
 
 const Component = models.Component || model('Component', componentSchema);

@@ -4,7 +4,13 @@ import bcrypt from 'bcrypt';
 import dbConnect from './dbConnect';
 import User from './models/User';
 import { registerFormSchema } from './formSchemas';
+import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { EXPIRATION_TIME_IN_SECONDS } from './constants';
+
+const secretKey = process.env.MY_SECRET_JWT;
+const key = new TextEncoder().encode(secretKey);
 
 export type UserFormState = {
   message: string;
@@ -15,6 +21,21 @@ type UserFormData = {
   location: string;
   password: string;
 };
+
+export async function encrypt(payload: any) {
+  return await new SignJWT(payload)
+    .setProtectedHeader({ alg: 'HS256' })
+    .setIssuedAt()
+    .setExpirationTime(`${EXPIRATION_TIME_IN_SECONDS} sec`)
+    .sign(key);
+}
+
+export async function decrypt(input: string): Promise<any> {
+  const { payload } = await jwtVerify(input, key, {
+    algorithms: ['HS256'],
+  });
+  return payload;
+}
 
 export async function registerUser(
   prevState: UserFormState,
@@ -79,11 +100,12 @@ export async function userLogin(
     };
   }
 
-  //   //If user is good to go
-  //     const expires = new Date(Date.now() + 10 * 1000);
-  //     const session = await encrypt({foundUser, expires})
+  const expires = new Date(Date.now() + EXPIRATION_TIME_IN_SECONDS * 1000);
+  const session = await encrypt({ foundUser, expires });
 
-  //     cookies().set('session', session, { expires, httpOnly: true})
+  cookies().set('session', session, { expires, httpOnly: true });
+
+  redirect('/dashboard');
 
   return {
     message: 'User signed in.',

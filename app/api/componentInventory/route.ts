@@ -1,5 +1,6 @@
 import dbConnect from '@/lib/dbConnect';
 import Component from '@/lib/models/Component';
+import { getSession } from '@/lib/session';
 import { Types } from 'mongoose';
 import { revalidatePath } from 'next/cache';
 import { NextResponse, NextRequest } from 'next/server';
@@ -25,9 +26,12 @@ export async function POST(request: NextRequest) {
     const path = request.nextUrl.searchParams.get('path') || '/';
     const date = new Date().toISOString();
 
+    const session = await getSession();
+
     body.values.lastUpdated = date;
     body.values.expectedArrival = '';
     body.values.quantityHistory = [];
+    body.values.branchLocation = session.location;
 
     await dbConnect();
 

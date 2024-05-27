@@ -10,8 +10,10 @@ import {
 import React from 'react';
 import SearchInput from './SearchInput';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { getSession } from '@/lib/session';
 
-const Header = () => {
+const Header = async () => {
+  // const session = await getSession();
   return (
     <div className="flex items-center justify-between bg-gray-50 rounded-md mb-2 p-2">
       {/* Left Side */}
