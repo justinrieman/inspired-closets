@@ -45,6 +45,7 @@ export async function registerUser(
     username: data.username,
     location: data.location,
     password: data.password,
+    role: 'admin',
   };
 
   const parsed = registerFormSchema.safeParse(newUser);
@@ -85,8 +86,6 @@ export async function userLogin(
     };
   }
 
-  console.log(userData);
-
   await dbConnect();
 
   const foundUser = await User.findOne({
@@ -97,6 +96,17 @@ export async function userLogin(
   if (!foundUser) {
     return {
       message: 'User not found.',
+    };
+  }
+
+  const passwordMatch = await bcrypt.compare(
+    userData.password,
+    foundUser.password
+  );
+
+  if (!passwordMatch) {
+    return {
+      message: 'Password does not match.',
     };
   }
 

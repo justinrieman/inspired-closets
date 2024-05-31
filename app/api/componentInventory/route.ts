@@ -7,10 +7,15 @@ import { NextResponse, NextRequest } from 'next/server';
 
 const ObjectId = require('mongoose').Types.ObjectId;
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     await dbConnect();
-    const components = await Component.find();
+
+    const { searchParams } = new URL(request.url);
+    const branchLocation = searchParams.get('location');
+
+    const filter = branchLocation ? { branchLocation: branchLocation } : {};
+    const components = await Component.find(filter);
 
     return new NextResponse(JSON.stringify(components), { status: 200 });
   } catch (error) {

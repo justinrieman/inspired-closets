@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { registerUser } from '@/lib/actions';
 import { registerFormSchema } from '@/lib/formSchemas';
 import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
 
 type RegisterFormFields = z.infer<typeof registerFormSchema>;
 
@@ -63,8 +64,19 @@ const RegisterForm = () => {
         {errors.password && (
           <div className="text-red-500 text-xs">{errors.password.message}</div>
         )}
-        {state?.message !== '' && (
+        {state?.message !== '' && state?.message !== 'New account created.' && (
           <div className="text-red-500 text-xs">{state.message}</div>
+        )}
+        {state?.message === 'New account created.' && (
+          <div className="flex justify-between items-center mt-2 px-4">
+            <div className="text-red-800 text-xs">{state.message}</div>
+            <Link
+              href="/login"
+              className="text-xs hover:bg-red-300 p-2 rounded-md bg-red-200 text-red-800"
+            >
+              Login
+            </Link>
+          </div>
         )}
         <hr className="mt-2"></hr>
         <button
