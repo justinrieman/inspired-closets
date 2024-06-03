@@ -58,7 +58,7 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div>
+    <div className="bg-gray-50 px-4 pb-4 mt-4 border rounded-md">
       <div className="flex justify-between">
         <div className="flex items-center py-4">
           <Input

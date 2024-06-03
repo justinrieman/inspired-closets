@@ -13,7 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { getSession } from '@/lib/session';
 
 const Header = async () => {
-  // const session = await getSession();
+  const session = await getSession();
   return (
     <div className="flex items-center justify-between bg-gray-50 rounded-md mb-2 p-2">
       {/* Left Side */}
@@ -50,7 +50,7 @@ const Header = async () => {
         <div className="border-r border-gray-300"></div>
         <button>
           <div className="flex gap-1 items-center p-1 rounded-md hover:text-red-800">
-            <span className="text-sm">Justin</span>
+            <span className="text-sm">{session.username}</span>
             <ChevronDown className="w-3"></ChevronDown>
           </div>
         </button>

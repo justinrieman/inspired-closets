@@ -55,15 +55,15 @@ const ComponentForm = () => {
       throw new Error('Failed to create component');
     }
 
-    router.refresh();
     router.push('/dashboard/inventory/components');
+    router.refresh();
   }
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col gap-2 w-1/2 mx-auto"
+        className="flex flex-col gap-2 w-1/2 mx-auto p-4"
       >
         <FormField
           control={form.control}
@@ -153,7 +153,9 @@ const ComponentForm = () => {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button className="mt-2" type="submit">
+          Submit
+        </Button>
       </form>
     </Form>
   );

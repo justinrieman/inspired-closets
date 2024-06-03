@@ -70,7 +70,7 @@ const LoginForm = () => {
           type="submit"
           disabled={isSubmitting}
         >
-          {isSubmitting ? 'Creating Account...' : 'Create Account'}
+          {isSubmitting ? 'Logging in ...' : 'Log in'}
         </button>
       </div>
     </form>

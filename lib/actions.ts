@@ -110,6 +110,8 @@ export async function userLogin(
     };
   }
 
+  foundUser.password = '';
+
   const expires = new Date(Date.now() + EXPIRATION_TIME_IN_SECONDS * 1000);
   const session = await encrypt({ foundUser, expires });
 
@@ -120,4 +122,8 @@ export async function userLogin(
   return {
     message: 'User signed in.',
   };
+}
+
+export async function userSignOut() {
+  cookies().set('session', '', { expires: new Date(0) });
 }
