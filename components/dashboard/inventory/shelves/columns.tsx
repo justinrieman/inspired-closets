@@ -9,6 +9,7 @@ import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { QuantityDialogForm } from '@/components/dashboard/inventory/QuantityDialogForm';
 import DataTableRowActions from '../DataTableRowActions';
 import MaxQuantityDialogForm from '../MaxQuantityDialogForm';
+import { CRITICALLY_LOW_QUANTITY, LOW_QUANTITY } from '@/lib/constants';
 
 export type ShelvesInventory = {
   _id: string;
@@ -31,7 +32,9 @@ const inventoryLevel: FilterFn<any> = (
   const quantityPercent = (quantity / maxQuantity) * 100;
 
   if (filterValue === 'low') {
-    return Boolean(quantityPercent < 50);
+    return Boolean(quantityPercent <= LOW_QUANTITY * 100);
+  } else if (filterValue === 'criticallyLow') {
+    return Boolean(quantityPercent <= CRITICALLY_LOW_QUANTITY * 100);
   } else if (filterValue === 'overstocked') {
     return Boolean(quantityPercent > 100);
   } else {
@@ -87,11 +90,11 @@ export const columns: ColumnDef<ShelvesInventory>[] = [
 
       let rowColor = '';
 
-      if (quantityPercent <= 30) {
+      if (quantityPercent <= CRITICALLY_LOW_QUANTITY * 100) {
         rowColor = 'bg-red-300';
       } else if (quantityPercent <= 50) {
         rowColor = 'bg-orange-200';
-      } else if (quantityPercent <= 70) {
+      } else if (quantityPercent <= LOW_QUANTITY * 100) {
         rowColor = 'bg-yellow-100';
       } else {
         rowColor = '';

@@ -1,1 +1,3 @@
 export const EXPIRATION_TIME_IN_SECONDS = 86400;
+export const LOW_QUANTITY = 0.75;
+export const CRITICALLY_LOW_QUANTITY = 0.3;

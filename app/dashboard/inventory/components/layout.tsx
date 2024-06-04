@@ -18,7 +18,7 @@ const ComponentsLayout = ({ children }: { children: React.ReactNode }) => {
         <TopnavDropdown items={components} label="Components" />
       )}{' '} */}
       <Topnav />
-      {children}
+      <div className="">{children}</div>
     </>
   );
 };

@@ -58,7 +58,7 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="bg-gray-50 px-4 pb-4 mt-4 border rounded-md">
+    <div className="bg-gray-50 2xl:h-[calc(100vh-162px)] h-[calc(100vh-160px)] px-4 pb-4 mt-4 border rounded-md ">
       <div className="flex justify-between">
         <div className="flex items-center py-4">
           <Input
@@ -83,6 +83,8 @@ export function DataTable<TData, TValue>({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="low">Low</SelectItem>
+              <SelectItem value="criticallyLow">Critically Low</SelectItem>
+
               <SelectItem value="overstocked">Overstocked</SelectItem>
               <SelectItem value="All">All Levels</SelectItem>
             </SelectContent>
@@ -109,9 +111,9 @@ export function DataTable<TData, TValue>({
           )}
         </div>
       </div>
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
+      <div className="border-b h-5/6">
+        <Table className="">
+          <TableHeader className="sticky top-0">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -132,7 +134,7 @@ export function DataTable<TData, TValue>({
               </TableRow>
             ))}
           </TableHeader>
-          <TableBody className="bg-gray-50">
+          <TableBody className="bg-gray-50 overflow-scroll">
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow

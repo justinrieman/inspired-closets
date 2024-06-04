@@ -13,6 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { PlusCircle } from 'lucide-react';
 
 const getComponents = async (location: string) => {
   try {
@@ -40,12 +41,11 @@ const ComponentsPage = async () => {
 
   return (
     <div>
-      <div>
-        <DataTable columns={columns} data={components} />
-      </div>
+      <DataTable columns={columns} data={components} />
 
       <Dialog>
-        <DialogTrigger className="bg-gray-50 py-2 rounded-md  px-4 text-sm absolute bottom-0 right-0 mr-8 mb-8 text-black hover:bg-red-200 hover:text-red-800">
+        <DialogTrigger className="flex items-center gap-2 bg-red-800 text-stone-50 py-2 border rounded-md  px-4 text-xs absolute bottom-0 right-0  mr-2 mb-2 md:mr-16 md:mb-8 2xl:right-[10%]  hover:bg-red-200 hover:text-red-800">
+          <PlusCircle className="w-4" />
           New Component
         </DialogTrigger>
         <DialogContent>
