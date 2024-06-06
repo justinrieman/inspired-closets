@@ -3,7 +3,7 @@ import InventoryItemPageCard from '@/components/dashboard/inventory/InventoryIte
 const getComponentById = async (id: any) => {
   try {
     const response = await fetch(
-      `http://localhost:3000/api/componentInventory/${id}`,
+      `${process.env.NEXT_PUBLIC_SITE_URL}/api/componentInventory/${id}`,
       {
         cache: 'no-store',
       }

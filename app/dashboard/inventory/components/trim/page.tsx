@@ -6,7 +6,7 @@ import { getSession } from '@/lib/session';
 const getComponents = async (location: string) => {
   try {
     const response = await fetch(
-      `http://localhost:3000/api/componentInventory?location=${location}`,
+      `${process.env.NEXT_PUBLIC_SITE_URL}/api/componentInventory?location=${location}`,
 
       {
         cache: 'no-store',
