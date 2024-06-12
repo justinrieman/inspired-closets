@@ -3,18 +3,10 @@ import mongoose from 'mongoose';
 const MONGODB_URI = process.env.MONGODB_URI;
 
 const dbConnect = async () => {
-  // const connectionState = mongoose.connection.readyState;
+  console.log(mongoose.connection.readyState);
 
-  // if (connectionState === 1) {
-  //   console.log('Already connected');
-  // }
-
-  // if (connectionState === 2) {
-  //   console.log('Connecting...');
-  // }
-
-  if (mongoose.connections[0].readyState) {
-    console.log('already connected');
+  if (mongoose.connection.readyState === 1) {
+    console.log('Already connected');
     return;
   }
 

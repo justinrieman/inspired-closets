@@ -8,6 +8,7 @@ import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { EXPIRATION_TIME_IN_SECONDS } from './constants';
+import { revalidatePath } from 'next/cache';
 
 const secretKey = process.env.MY_SECRET_JWT;
 const key = new TextEncoder().encode(secretKey);
@@ -86,42 +87,47 @@ export async function userLogin(
     };
   }
 
-  await dbConnect();
+  try {
+    await dbConnect();
 
-  const foundUser = await User.findOne({
-    username: userData.username.trim().toLowerCase(),
-    location: userData.location.trim().toLowerCase(),
-  });
+    const foundUser = await User.findOne({
+      username: userData.username.trim().toLowerCase(),
+      location: userData.location.trim().toLowerCase(),
+    });
 
-  if (!foundUser) {
+    if (!foundUser) {
+      return {
+        message: 'User not found.',
+      };
+    }
+
+    const passwordMatch = await bcrypt.compare(
+      userData.password,
+      foundUser.password
+    );
+
+    if (!passwordMatch) {
+      return {
+        message: 'Password does not match.',
+      };
+    }
+
+    foundUser.password = '';
+
+    const expires = new Date(Date.now() + EXPIRATION_TIME_IN_SECONDS * 1000);
+    const session = await encrypt({ foundUser, expires });
+
+    cookies().set('session', session, { expires, httpOnly: true });
+
     return {
-      message: 'User not found.',
+      message: 'Go to dashboard',
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      message: 'Something went wrong.',
     };
   }
-
-  const passwordMatch = await bcrypt.compare(
-    userData.password,
-    foundUser.password
-  );
-
-  if (!passwordMatch) {
-    return {
-      message: 'Password does not match.',
-    };
-  }
-
-  foundUser.password = '';
-
-  const expires = new Date(Date.now() + EXPIRATION_TIME_IN_SECONDS * 1000);
-  const session = await encrypt({ foundUser, expires });
-
-  cookies().set('session', session, { expires, httpOnly: true });
-
-  redirect('/dashboard');
-
-  return {
-    message: 'User signed in.',
-  };
 }
 
 export async function userSignOut() {

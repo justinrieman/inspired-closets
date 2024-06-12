@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { userLogin } from '@/lib/actions';
 import { loginFormSchema } from '@/lib/formSchemas';
 import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
 
 type LoginFormFields = z.infer<typeof loginFormSchema>;
 
@@ -61,8 +62,16 @@ const LoginForm = () => {
         {errors.password && (
           <div className="text-red-500 text-xs">{errors.password.message}</div>
         )}
-        {state?.message !== '' && (
+        {state?.message !== '' && state?.message !== 'Go to dashboard' && (
           <div className="text-red-500 text-xs">{state.message}</div>
+        )}
+        {state?.message === 'Go to dashboard' && (
+          <Link
+            href="/dashboard"
+            className="text-xs text-center my-2 hover:bg-red-200 p-2 rounded-md bg-gray-50"
+          >
+            Go to dashboard
+          </Link>
         )}
         <hr className="mt-2"></hr>
         <button

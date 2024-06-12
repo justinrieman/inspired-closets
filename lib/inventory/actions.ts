@@ -14,7 +14,7 @@ export async function getLowComponents() {
     criticallyLow: 0,
   };
 
-  dbConnect();
+  await dbConnect();
   const components = await Component.find({
     branchLocation: session.location,
     $expr: {
